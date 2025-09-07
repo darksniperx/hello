@@ -4,7 +4,7 @@ import os
 
 app = Flask(__name__)
 
-# Set your bot token in Render environment variables for security
+# Bot token from environment variables (set in Render)
 TOKEN = os.environ.get("BOT_TOKEN", "YOUR_BOT_TOKEN_HERE")
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
@@ -15,12 +15,18 @@ def home():
 @app.route(f'/webhook/{TOKEN}', methods=['POST'])
 def webhook():
     data = request.get_json()
+    print("Incoming update:", data)  # Debug: check if Telegram sends update
+
     if "message" in data:
         chat_id = data["message"]["chat"]["id"]
         text = data["message"].get("text", "")
-        
-        # Echo bot reply
-        reply = f"You said: {text}"
+
+        # Handle /start command
+        if text == "/start":
+            reply = "Welcome to my bot! 😎\nYou can type anything and I'll echo it back."
+        else:
+            reply = f"You said: {text}"
+
         payload = {
             "chat_id": chat_id,
             "text": reply
