@@ -12,10 +12,16 @@ TELEGRAM_API_URL = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 def home():
     return "Bot is running!"
 
+# Debug route for browser GET requests (optional)
+@app.route(f'/webhook/{TOKEN}', methods=['GET'])
+def webhook_test():
+    return "Webhook is live! ✅", 200
+
+# Telegram webhook POST route
 @app.route(f'/webhook/{TOKEN}', methods=['POST'])
 def webhook():
     data = request.get_json()
-    print("Incoming update:", data)  # Debug: check if Telegram sends update
+    print("Incoming update:", data)  # Debug: check Telegram updates
 
     if "message" in data:
         chat_id = data["message"]["chat"]["id"]
